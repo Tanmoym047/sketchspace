@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Excalidraw } from '@excalidraw/excalidraw';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 import "@excalidraw/excalidraw/index.css";
 
 const Board = () => {
@@ -9,7 +10,6 @@ const Board = () => {
     const [initialData, setInitialData] = useState(null);
     const [boardName, setBoardName] = useState("Untitled Board");
 
-    // Load Board Data
     useEffect(() => {
         const rawData = localStorage.getItem(`sketchspace_data_${roomId}`);
         if (rawData) {
@@ -22,8 +22,7 @@ const Board = () => {
         }
     }, [roomId]);
 
-    // Save Data (Metadata + Elements)
-    const handleSave = (elements = null) => {
+    const handleSave = (elements = null, showUI = false) => {
         const currentElements = elements || excalidrawAPI?.getSceneElements();
         const dataToSave = {
             name: boardName,
@@ -31,30 +30,42 @@ const Board = () => {
             lastModified: Date.now()
         };
         localStorage.setItem(`sketchspace_data_${roomId}`, JSON.stringify(dataToSave));
-    };
 
-    const handleChange = (elements) => {
-        if (elements.length > 0) handleSave(elements);
+        // Show SweetAlert only when manually clicked
+        if (showUI) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: 'Progress Saved!'
+            });
+        }
     };
 
     return (
         <div className="flex flex-col h-screen bg-base-200 overflow-hidden">
-            <header className="navbar bg-base-100 shadow-sm z-10 px-4 gap-4">
+            <header className="navbar bg-base-100 shadow-sm z-10 px-4">
                 <div className="flex-1 gap-2">
-                    {/* Editable Board Name */}
                     <input 
                         type="text" 
                         value={boardName}
                         onChange={(e) => setBoardName(e.target.value)}
-                        onBlur={() => handleSave()} // Save when user clicks away
-                        className="input input-ghost input-sm text-xl font-bold text-primary focus:bg-base-200"
-                        placeholder="Untitled Board"
+                        onBlur={() => handleSave(null, false)} // Auto-save on blur (silent)
+                        className="input input-ghost input-sm text-xl font-bold text-primary focus:bg-base-200 w-full max-w-xs"
                     />
-                    <span className="text-[10px] font-mono opacity-30 mt-1 hidden md:block">ID: {roomId}</span>
                 </div>
                 
                 <div className="flex-none gap-2">
-                    <button className="btn btn-sm btn-primary px-6" onClick={() => handleSave()}>Save Now</button>
+                    {/* Manual Save Button calls handleSave with showUI = true */}
+                    <button className="btn btn-sm btn-primary px-6" onClick={() => handleSave(null, true)}>
+                        Save
+                    </button>
                 </div>
             </header>
 
@@ -62,7 +73,9 @@ const Board = () => {
                 <Excalidraw
                     excalidrawAPI={(api) => setExcalidrawAPI(api)}
                     initialData={initialData}
-                    onChange={handleChange}
+                    onChange={(elements) => {
+                        if (elements.length > 0) handleSave(elements, false); // Silent auto-save
+                    }}
                 />
             </main>
         </div>

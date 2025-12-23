@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2';
 
 const BoardList = () => {
     const navigate = useNavigate();
     const [savedBoards, setSavedBoards] = useState([]);
 
-    useEffect(() => {
+    const loadBoards = () => {
         const boards = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -19,48 +19,69 @@ const BoardList = () => {
                         name: parsed.name || "Untitled Board",
                         date: parsed.lastModified || 0
                     });
-                } catch (e) {
-                    console.error("Error parsing board", e);
-                }
+                } catch (e) { console.error(e); }
             }
         }
-        // Sort by newest first
         setSavedBoards(boards.sort((a, b) => b.date - a.date));
-    }, []);
+    };
 
-    const handleCreateNew = () => {
-        const newId = uuidv4();
-        navigate(`/board/${newId}`);
+    useEffect(() => { loadBoards(); }, []);
+
+    const handleDelete = (id, name) => {
+        Swal.fire({
+            title: `Delete "${name}"?`,
+            text: "This action cannot be undone!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.removeItem(`sketchspace_data_${id}`);
+                loadBoards(); // Refresh list
+                Swal.fire('Deleted!', 'Board has been removed.', 'success');
+            }
+        });
     };
 
     return (
-        <div className="p-8 max-w-4xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-primary">Your Boards</h1>
-                <button onClick={handleCreateNew} className="btn btn-primary">
-                    + New Board
+        <div className="p-8 max-w-5xl mx-auto min-h-screen bg-base-100">
+            <div className="flex justify-between items-center mb-10 border-b pb-4">
+                <h1 className="text-3xl font-extrabold text-primary">My SketchSpaces</h1>
+                <button 
+                    onClick={() => navigate(`/board/${crypto.randomUUID()}`)} 
+                    className="btn btn-primary shadow-lg"
+                >
+                    + Create New Space
                 </button>
             </div>
 
-            {savedBoards.length === 0 ? (
-                <div className="text-center py-20 bg-base-200 rounded-box">
-                    <p className="opacity-50">No boards found. Create your first one!</p>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {savedBoards.map((board) => (
-                        <div key={board.id} className="card bg-base-100 shadow-xl border border-base-300">
-                            <div className="card-body p-4">
-                                <h2 className="card-title text-lg text-primary truncate">{board.name}</h2>
-                                <p className="text-[10px] font-mono opacity-40">ID: {board.id}</p>
-                                <div className="card-actions justify-end mt-2">
-                                    <button onClick={() => navigate(`/board/${board.id}`)} className="btn btn-xs btn-outline">Open</button>
-                                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {savedBoards.map((board) => (
+                    <div key={board.id} className="group card bg-base-100 border border-base-300 shadow-md hover:shadow-xl transition-all">
+                        <div className="card-body p-6">
+                            <h2 className="card-title text-primary truncate mb-0">{board.name}</h2>
+                            <p className="text-[10px] opacity-40 font-mono italic">ID: {board.id}</p>
+                            
+                            <div className="card-actions justify-between items-center mt-6">
+                                <button 
+                                    onClick={() => handleDelete(board.id, board.name)} 
+                                    className="btn btn-square btn-outline btn-error btn-s opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                </button>
+                                <button 
+                                    onClick={() => navigate(`/board/${board.id}`)} 
+                                    className="btn btn-sm btn-primary px-5"
+                                >
+                                    Open
+                                </button>
                             </div>
                         </div>
-                    ))}
-                </div>
-            )}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
