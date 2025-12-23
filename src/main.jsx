@@ -20,6 +20,7 @@ import Register from "./components/Authentication/Register";
 // import UpdateBlogs from "./components/Blogs/UpdateBlogs.jsx";
 import Chatbot from "./components/Chatbot/Chatbot.jsx";
 import Board from "./components/Board/Board.jsx";
+import BoardList from "./components/Board/BoardList.jsx";
 // import FeaturedBlogs from "./components/Blogs/FeaturedBlogs.jsx";
 
 const queryClient = new QueryClient();
@@ -80,16 +81,16 @@ const router = createBrowserRouter([
         path: "/board",
         element:
           <PrivateRoute>
+            <BoardList></BoardList>
+          </PrivateRoute>,
+      },
+      {
+        path: "/board/:roomId",
+        element:
+          <PrivateRoute>
             <Board></Board>
           </PrivateRoute>,
       },
-      // {
-      //   path: "/board/:roomId",
-      //   element:
-      //     <PrivateRoute>
-      //       <Board></Board>
-      //     </PrivateRoute>,
-      // },
       {
         path: "/chatbot",
         element:
