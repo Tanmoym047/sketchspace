@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import 'animate.css';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Swal from 'sweetalert2'
+import axios from "axios"; // Ensure axios is imported
 
 import { useForm } from "react-hook-form"
 import { useContext, useState } from "react";
@@ -21,7 +22,8 @@ const Register = () => {
 
     const navigate = useNavigate();
 
-    const { signUp } = useContext(AuthContext);
+    // Destructure updateUser along with signUp from AuthContext
+    const { signUp, updateUser } = useContext(AuthContext);
 
     const handleRegistrationError = (message) => {
         Swal.fire({
@@ -32,10 +34,10 @@ const Register = () => {
         });
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         const { email, password, name, photo } = data;
         const pattern = /^(?=.*[A-Z])(?=.*[!@#$%^&*()])(?=.*[0-9]).{6,}$/;
-        
+
         if (!name) {
             handleRegistrationError('Please enter your name.');
             return;
@@ -45,7 +47,7 @@ const Register = () => {
             handleRegistrationError('Please provide a photo URL.');
             return;
         }
-        
+
         if (!email) {
             handleRegistrationError('Please enter a valid email address.');
             return;
@@ -56,21 +58,41 @@ const Register = () => {
             return;
         }
 
-        signUp(email, password)
-            .then(result => {
+        try {
+            // 1. Create User in Firebase
+            const result = await signUp(email, password);
+
+            // 2. Update Firebase Profile with Name and Photo
+            await updateUser(name, photo);
+
+            // 3. Sync User to MongoDB
+            const userData = {
+                name: name,
+                email: email,
+                photoURL: photo
+            };
+            await axios.put('http://localhost:5000/user/sync', userData);
+
+            // 4. Get JWT Token for auto-login
+            const jwtRes = await axios.post('http://localhost:5000/jwt', { email }, {
+                withCredentials: true
+            });
+
+            if (jwtRes.data.success) {
                 Swal.fire({
                     title: 'Success!',
-                    text: 'Successfully Registered',
+                    text: 'Successfully Registered and Logged In',
                     icon: 'success',
                     confirmButtonText: 'OK'
                 }).then(() => {
+                    // 5. Navigate to Home
                     navigate('/');
                 });
-            })
-            .catch(error => {
-                console.error(error.message);
-                handleRegistrationError(error.message);
-            });
+            }
+        } catch (error) {
+            console.error(error.message);
+            handleRegistrationError(error.message);
+        }
     };
 
     return (

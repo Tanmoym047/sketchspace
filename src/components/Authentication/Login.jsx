@@ -29,19 +29,41 @@ const Login = () => {
     const { signIn, signInWithGoogle, signInWithGithub } = useContext(AuthContext)
 
     const handleLoginSuccess = (user, data) => {
+        // 1. Prepare user profile for MongoDB
+        const userData = {
+            email: user.email,
+            name: user.displayName,
+            photoURL: user.photoURL
+        };
+
         Swal.fire({
             title: 'Success!',
             text: 'Successfully Logged In',
             icon: 'success',
             confirmButtonText: 'OK'
         }).then(() => {
-            axios.post('https://your-voice-server.vercel.app/jwt', data, {
-                withCredentials: true
-            }).then(res => {
-                if (res.data.success) {
-                    navigate(location?.state ? location?.state : '/');
-                }
-            });
+            // 2. Sync user to MongoDB first
+            // We use PUT and your localhost URL for the new SketchSpace backend
+            axios.put('http://localhost:5000/user/sync', userData)
+                .then(() => {
+                    // 3. NOW run your original JWT logic
+                    // Using 'data' variable exactly as your working code did
+                    axios.post('http://localhost:5000/jwt', data, {
+                        withCredentials: true
+                    }).then(res => {
+                        if (res.data.success) {
+                            // 4. Navigate using your PrivateRoute's state logic
+                            // This sends the user back to the board they were trying to access
+                            navigate(location?.state ? location?.state : '/');
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error("DB Sync Error:", err);
+                    // Fallback: If DB sync fails, still try to navigate so the user isn't stuck
+                    axios.post('http://localhost:5000/jwt', data, { withCredentials: true })
+                        .then(res => res.data.success && navigate(location?.state ? location?.state : '/'));
+                });
         });
     };
 
@@ -67,7 +89,7 @@ const Login = () => {
     const onSubmit = (data) => {
         const { email, password } = data;
         const pattern = /^(?=.*[A-Z])(?=.*[!@#$%^&*()])(?=.*[0-9]).{6,}$/;
-        
+
         if (!email) {
             handleLoginError({ message: 'Please Check the Email Again' });
             return;
