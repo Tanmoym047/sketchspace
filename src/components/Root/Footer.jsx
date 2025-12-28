@@ -4,7 +4,7 @@ import blog from '../../assets/blog.json'
 
 const Footer = () => {
     return (
-        <footer className="mt-6 footer footer-horizontal footer-center bg-base-200 text-base-content rounded-2xl p-8">
+        <footer className="mt-6 footer footer-horizontal footer-center bg-base-200 text-base-content rounded-2xl p-8 flex flex-col">
 
             < aside className="space-y-1 px-4">
                 <div className="flex space-x-2 items-center">
