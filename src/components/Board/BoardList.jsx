@@ -84,7 +84,7 @@ const BoardList = () => {
                             <div className="flex justify-between items-start">
                                 <h2 className="font-bold text-lg truncate w-4/5">{board.name}</h2>
                                 {board.owner === user?.email && (
-                                    <div className="badge badge-outline badge-xs opacity-50">Owner</div>
+                                    <div className="badge badge-outline badge-xs ">Owner</div>
                                 )}
                             </div>
                             <p className="text-xs opacity-50 truncate mt-1">ID: {board.roomId}</p>

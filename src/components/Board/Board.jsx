@@ -202,40 +202,50 @@ const Board = () => {
 
     return (
         <div className="flex flex-col h-screen bg-base-200 overflow-hidden text-base-content">
-            <header className="navbar bg-base-100 shadow-sm z-10 px-4">
-                <div className="flex-1">
+            <header className="navbar bg-base-100 shadow-sm z-10 px-4 flex-nowrap items-center h-auto py-2">
+                {/* Left Side: Board Name - Stays fixed on the left */}
+                <div className="flex-1 self-center">
                     <input
                         type="text"
                         value={boardName}
                         onChange={(e) => setBoardName(e.target.value)}
                         onBlur={() => handleSave(null, false)}
-                        className="input input-ghost input-sm text-xl font-bold text-emerald-700 w-full max-w-xs focus:bg-transparent"
+                        className="input input-ghost input-sm text-xl font-bold text-emerald-600 w-full max-w-[200px] sm:max-w-xs focus:bg-transparent"
                     />
                 </div>
-                <div className="flex-none flex items-center gap-2">
-                    {/* NEW INVITE BUTTON - MATCHES YOUR DESIGN */}
-                    <button className="btn btn-sm btn-outline btn-secondary" onClick={handleInvite}>
-                        Invite
-                    </button>
 
-                    <button
-                        onClick={handleAiGenerate}
-                        className="btn btn-sm btn-outline btn-secondary border-dashed"
-                    >
-                        AI Magic ✨
-                    </button>
+                {/* Right Side: Buttons Container - Forced 2 Rows */}
+                <div className="flex-none grid grid-rows-2 gap-y-2 items-center">
+                    {/* Row 1: Action Buttons */}
+                    <div className="flex justify-end gap-2">
+                        <button className="btn btn-xs sm:btn-sm btn-outline btn-secondary" onClick={handleInvite}>
+                            Invite
+                        </button>
+                        <button
+                            onClick={handleAiGenerate}
+                            className="btn btn-xs sm:btn-sm btn-outline btn-secondary border-dashed"
+                        >
+                            AI Magic ✨
+                        </button>
+                    </div>
 
-                    {user?.photoURL && (
-                        <div className="avatar">
-                            <div className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 mr-2">
-                                <img src={user.photoURL} alt="Your profile" />
+                    {/* Row 2: Status & Save */}
+                    <div className="flex justify-end items-center gap-2">
+                        {user?.photoURL && (
+                            <div className="avatar">
+                                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1 shrink-0">
+                                    <img src={user.photoURL} alt="Your profile" className="rounded-full" />
+                                </div>
                             </div>
-                        </div>
-                    )}
-                    <div className="badge badge-success badge-outline hidden sm:flex">Live Sync</div>
-                    <button className="btn btn-sm btn-primary bg-emerald-800 px-6" onClick={() => handleSave(null, true)}>
-                        Save Now
-                    </button>
+                        )}
+                        <div className="badge badge-success badge-outline hidden lg:flex text-[10px] sm:text-xs">Live</div>
+                        <button
+                            className="btn btn-xs sm:btn-sm btn-primary bg-emerald-800 border-none px-3 sm:px-6"
+                            onClick={() => handleSave(null, true)}
+                        >
+                            Save Now
+                        </button>
+                    </div>
                 </div>
             </header>
 

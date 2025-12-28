@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const Chatbot = () => {
-    const API_URL = 'http://localhost:5000/generate';
+    const API_URL = 'http://localhost:5000/chatbot/generate';
 
     const [prompt, setPrompt] = useState('');
     const [response, setResponse] = useState('');
