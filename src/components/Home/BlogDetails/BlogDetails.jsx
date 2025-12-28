@@ -185,24 +185,24 @@ const BlogDetails = () => {
                     <p className="py-4 font-medium text-lg border-b">{long_description}</p>
 
                     <div className=" mt-4 mb-4">
-                        <p>Category: <span className="text-lg text-rose-800 font-bold opacity-80">{category}</span></p>
+                        <p>Category: <span className="text-lg text-emerald-800 font-bold opacity-80">{category}</span></p>
                         {
                             user.email === email ? <div className='flex justify-center space-x-10 '>
-                                <Link className='w' to={`/update/${_id}`}> <button className="btn bg-rose-800 text-white mt-4">Update</button></Link>
-                                <button onClick={handleDelete} className="btn bg-rose-800 text-white  mt-4">Delete</button>
+                                <Link className='w' to={`/update/${_id}`}> <button className="btn bg-emerald-800 text-white mt-4">Update</button></Link>
+                                <button onClick={handleDelete} className="btn bg-emerald-800 text-white  mt-4">Delete</button>
                             </div> : <div> </div>
                         }
                     </div>
                 </div>
 
             </div>
-            <div className='border-2 border-rose-800 shadow-2xl rounded-2xl p-6 mt-8'>
+            <div className='border-2 border-emerald-800 shadow-2xl rounded-2xl p-6 mt-8'>
                 {
                     (user.email === email) ? <div> </div> : <div className='text-center space-y-4'>
                         <h2 className='text-2xl'>You can comment here:</h2>
                         <form onSubmit={handleSubmit(mutateAsync)} className='flex items-center justify-center gap-4'>
                             <textarea {...register('comment')} className="textarea textarea-info w-2/4 h-28 text-xl" placeholder="Comment Here..."></textarea>
-                            <button className='btn bg-rose-800 text-white'>Post</button>
+                            <button className='btn bg-emerald-800 text-white'>Post</button>
                         </form>
                     </div>
                 }

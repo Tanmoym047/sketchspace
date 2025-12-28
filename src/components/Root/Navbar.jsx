@@ -58,7 +58,7 @@ const Navbar = () => {
     const links = <>
         <li className='p-1'><NavLink style={({ isActive }) => {
             return {
-                backgroundColor: isActive ? '#a50036' : 'white',
+                backgroundColor: isActive ? '#006045' : 'white',
                 fontWeight: isActive ? "bold" : "",
                 color: isActive ? 'white' : 'black'
             };
@@ -79,14 +79,14 @@ const Navbar = () => {
         }} to='/addblog'>Add Blogs</NavLink></li> */}
         <li className='p-1'><NavLink style={({ isActive }) => {
             return {
-                backgroundColor: isActive ? '#a50036' : 'white',
+                backgroundColor: isActive ? '#006045' : 'white',
                 fontWeight: isActive ? "bold" : "",
                 color: isActive ? 'white' : 'black'
             };
         }} to='/board'>Board</NavLink></li>
         <li className='p-1'><NavLink style={({ isActive }) => {
             return {
-                backgroundColor: isActive ? '#a50036' : 'white',
+                backgroundColor: isActive ? '#006045' : 'white',
                 fontWeight: isActive ? "bold" : "",
                 color: isActive ? 'white' : 'black'
             };
@@ -132,7 +132,7 @@ const Navbar = () => {
                             }
                         </ul>
                     </div>
-                    <NavLink to='/' className="btn btn-ghost text-lg lg:text-xl bg-clip-text text-transparent bg-gradient-to-r from-rose-800 to-rose-500">
+                    <NavLink to='/' className="btn btn-ghost text-lg lg:text-xl bg-clip-text text-transparent bg-gradient-to-r from-emerald-800 to-emerald-500 font-extrabold">
                         <Lottie className="h-8 hidden md:inline-block" animationData={blog}></Lottie>
                         SketchSpace</NavLink>
                 </div>
@@ -161,8 +161,8 @@ const Navbar = () => {
                                 </ul>
                             </div>
                             : <div className="space-x-2">
-                                <Link to='/login' ><button className="btn btn-sm rounded-lg lg:btn-md  bg-rose-800 text-white">Login</button></Link>
-                                <Link to='/register' ><button className="btn btn-sm rounded-lg lg:btn-md bg-rose-800 text-white">Register</button> </Link>
+                                <Link to='/login' ><button className="btn btn-sm rounded-lg lg:btn-md  bg-emerald-800 text-white">Login</button></Link>
+                                <Link to='/register' ><button className="btn btn-sm rounded-lg lg:btn-md bg-emerald-800 text-white">Register</button> </Link>
                             </div>
                     }
                 </div>

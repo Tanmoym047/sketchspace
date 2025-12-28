@@ -44,12 +44,12 @@ const RecentBlog = ({ recentBlog }) => {
 
                 <div className="flex gap-8 flex-wrap items-center justify-between">
 
-                    <h3 className="btn btn-ghost font-bold text-2xl text-rose-800">{category}</h3>
+                    <h3 className="btn btn-ghost font-bold text-2xl text-emerald-800">{category}</h3>
                     <h3 className='text-lg opacity-80'>Posted by: {poster}</h3>
                 </div>
 
                 <div className="card-actions justify-end">
-                    <Link to={`/blogs/${_id}`}><button className="btn bg-rose-800 text-white">View Details</button></Link>
+                    <Link to={`/blogs/${_id}`}><button className="btn bg-emerald-800 text-white">View Details</button></Link>
                                         
                 </div>
             </div>

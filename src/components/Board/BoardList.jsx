@@ -62,7 +62,7 @@ const BoardList = () => {
         <div className="p-8 max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold">Cloud Boards</h1>
+                    <h1 className="text-2xl font-bold">Your Boards</h1>
                     <p className="text-sm opacity-60">Welcome, {user?.displayName || user?.email}</p>
                 </div>
                 <button 

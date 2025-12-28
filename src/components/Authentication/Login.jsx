@@ -118,13 +118,13 @@ const Login = () => {
             <title>SketchSpace | Login</title>
             <div className="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 animate__animated animate__zoomIn">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 animate__animated animate__fadeInDown">Welcome to <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-800 to-rose-500">SketchSpace</span></h1>
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 animate__animated animate__fadeInDown">Welcome to <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-800 to-emerald-500">SketchSpace</span></h1>
                     <p className="mt-2 text-gray-600 dark:text-gray-400">Log in to see how deep the rabbit hole goes.</p>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                        <input {...register('email')} type="email" placeholder="Email" className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
+                        <input {...register('email')} type="email" placeholder="Email" className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
@@ -133,7 +133,7 @@ const Login = () => {
                                 {...register('password')}
                                 type={showPass ? 'text' : 'password'}
                                 placeholder="Password"
-                                className="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500 pr-10 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                className="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 pr-10 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             />
                             <button
                                 type="button"
@@ -145,14 +145,14 @@ const Login = () => {
                         </div>
                     </div>
                     <div>
-                        <button type="submit" className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-800 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-colors">
+                        <button type="submit" className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-800 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors">
                             Login
                         </button>
                     </div>
                 </form>
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        New here? <Link to='/register' className="text-rose-800 font-semibold hover:text-rose-700 transition-colors">Register</Link>
+                        New here? <Link to='/register' className="text-emerald-800 font-semibold hover:text-rose-700 transition-colors">Register</Link>
                     </p>
                     <div className="relative my-4">
                         <div className="absolute inset-0 flex items-center">

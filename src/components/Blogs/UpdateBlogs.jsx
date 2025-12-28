@@ -228,7 +228,7 @@ const UpdateBlogs = () => {
                         {/* Submit button */}
                         <div className="form-control mt-6">
                             <button
-                                className="btn bg-rose-800 text-white hover:bg-rose-700 w-full dark:bg-rose-800"
+                                className="btn bg-emerald-800 text-white hover:bg-rose-700 w-full dark:bg-emerald-800"
                                 type="submit"
                                 disabled={isUpdating}
                             >

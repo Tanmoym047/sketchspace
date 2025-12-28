@@ -16,7 +16,7 @@ AOS.init();
 
 const Slider = () => {
     const [text] = useTypewriter({
-        words: ['Your', 'Voice'],
+        words: ['SketchSpace'],
         loop: 0,
         onLoopDone: () => console.log(`loop completed after 3 runs.`)
     })
@@ -39,7 +39,7 @@ const Slider = () => {
             >
                 <SwiperSlide>
                     <div className='bg-[url(https://images.unsplash.com/photo-1731963094554-c5c981ccdefd?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)] h-[350px] lg:h-[550px] lg:bg-no-repeat bg-cover rounded-2xl flex justify-center items-center '>
-                        <h2 className='text-white text-4xl lg:text-7xl text-center font-bold leading-relaxed lg:leading-relaxed'>Welcome to <br /> <span className='  text-rose-800 uppercase font-extrabold'>{text}</span> <Cursor cursorColor='blue' /></h2>
+                        <h2 className='text-white text-4xl lg:text-7xl text-center font-bold leading-relaxed lg:leading-relaxed'>Welcome to <br /> <span className='  text-emerald-800 uppercase font-extrabold'>{text}</span> <Cursor cursorColor='blue' /></h2>
                     </div>
                 </SwiperSlide>
                 <SwiperSlide>
@@ -49,7 +49,7 @@ const Slider = () => {
                 </SwiperSlide>
                 <SwiperSlide>
                     <div className='bg-[url(https://plus.unsplash.com/premium_photo-1681825268400-c561bd47d586?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)] h-[350px] lg:h-[550px] lg:bg-no-repeat bg-cover rounded-2xl flex justify-center items-center '>
-                        <h2 className=' text-white text-4xl  lg:text-7xl leading-relaxed lg:leading-relaxed font-poppins text-center font-bold'>With<br /> <span className='animate__animated animate__fadeInDown animate__delay-1s  text-rose-800 uppercase font-extrabold'> Like minded people</span> </h2>
+                        <h2 className=' text-white text-4xl  lg:text-7xl leading-relaxed lg:leading-relaxed font-poppins text-center font-bold'>With<br /> <span className='animate__animated animate__fadeInDown animate__delay-1s  text-emerald-800 uppercase font-extrabold'> Like minded people</span> </h2>
                     </div>
                 </SwiperSlide>
                 

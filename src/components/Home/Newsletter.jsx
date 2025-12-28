@@ -39,7 +39,7 @@ const Newsletter = () => {
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="join flex justify-center  w-full">
                 <input {...register('email')} className="input w-3/4 input-bordered join-item" placeholder="Email" />
-                <button className="btn bg-rose-800 text-white w-1/4 join-item rounded-r-full">Subscribe</button>
+                <button className="btn bg-emerald-800 text-white w-1/4 join-item rounded-r-full">Subscribe</button>
             </form>
         </div>
     );

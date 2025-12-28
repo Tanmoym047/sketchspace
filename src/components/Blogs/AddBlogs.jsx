@@ -174,7 +174,7 @@ const AddBlogs = () => {
                         {/* Submit button */}
                         <div className="form-control mt-6">
                             <button
-                                className="btn bg-rose-800 text-white hover:bg-rose-900 w-full dark:bg-rose-800 dark:hover:bg-rose-700"
+                                className="btn bg-emerald-800 text-white hover:bg-rose-900 w-full dark:bg-emerald-800 dark:hover:bg-rose-700"
                                 type="submit"
                                 disabled={isLoading}
                             >

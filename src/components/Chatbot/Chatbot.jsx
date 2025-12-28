@@ -38,7 +38,7 @@ const Chatbot = () => {
             <div className="w-full max-w-2xl bg-base-content rounded-3xl shadow-xl border border-slate-700 p-6 sm:p-10 flex flex-col items-center animate-fade-in">
 
                 <h1 className="text-3xl sm:text-3xl font-extrabold text-gray-500 text-center mb-2 leading-tight tracking-wide">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-800 to-rose-500">SketchSpace</span> Chatbot
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-800 to-emerald-500">SketchSpace</span> Chatbot
                 </h1>
                 <p className="text-center text-gray-500 mb-8 max-w-md text-sm sm:text-base font-bold">
                     Use it to help post your blog
@@ -57,7 +57,7 @@ const Chatbot = () => {
                     <button
                         type="submit"
                         className="btn w-full font-bold py-3 rounded-xl text-md transition-all duration-300 transform hover:scale-105
-                       bg-rose-800 shadow-lg hover:shadow-xl hover:shadow-rose-500/30 text-white"
+                       bg-emerald-800 shadow-lg hover:shadow-xl hover:shadow-emerald-500/30 text-white"
                         disabled={loading}
                     >
                         {loading ? (
@@ -81,7 +81,7 @@ const Chatbot = () => {
 
                         <div className="card w-full bg-slate-700 shadow-lg border border-slate-600 mt-2 rounded-xl animate-fade-in-up">
                             <div className="card-body p-2">
-                                <h2 className="card-title text-2xl mb-4 text-rose-700 font-bold border-b border-rose-500/50 pb-2">Response</h2>
+                                <h2 className="card-title text-2xl mb-4 text-rose-700 font-bold border-b border-emerald-500/50 pb-2">Response</h2>
 
                                 <p className="whitespace-pre-wrap text-gray-300 leading-relaxed text-base">{response}</p>
                             </div>

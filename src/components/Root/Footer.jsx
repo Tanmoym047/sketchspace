@@ -9,7 +9,7 @@ const Footer = () => {
             < aside className="space-y-1 px-4">
                 <div className="flex space-x-2 items-center">
                     <Lottie className="h-12 hidden md:inline-block" animationData={blog}></Lottie>
-                    <h2 className="font-bold text-xl lg:text-3xl bg-clip-text text-transparent bg-gradient-to-r from-rose-800 to-rose-500">
+                    <h2 className="font-bold text-xl lg:text-3xl bg-clip-text text-transparent bg-gradient-to-r from-emerald-800 to-emerald-500">
                         SketchSpace
                     </h2>
                 </div>
