@@ -23,7 +23,7 @@ const Board = () => {
     useEffect(() => {
         const fetchBoard = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/board/${roomId}`);
+                const response = await fetch(`https://sketchspace-server.onrender.com/board/${roomId}`);
                 const data = await response.json();
                 if (data) {
                     setBoardName(data.name || "Untitled Board");
@@ -83,7 +83,7 @@ const Board = () => {
         };
 
         try {
-            await fetch(`http://localhost:5000/board/save/${roomId}`, {
+            await fetch(`https://sketchspace-server.onrender.com/board/save/${roomId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(boardData)
@@ -112,7 +112,7 @@ const Board = () => {
 
         if (inviteeEmail) {
             try {
-                const response = await fetch('http://localhost:5000/board/invite', {
+                const response = await fetch('https://sketchspace-server.onrender.com/board/invite', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ roomId, inviteeEmail })
@@ -168,7 +168,7 @@ const Board = () => {
             Swal.fire({ title: 'AI is drawing...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
             try {
-                const response = await fetch(`http://localhost:5000/generate`, {
+                const response = await fetch(`https://sketchspace-server.onrender.com/generate`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: userPrompt })
