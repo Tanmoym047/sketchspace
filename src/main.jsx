@@ -14,14 +14,10 @@ import AuthProvider from "./AuthProvider/AuthProvider";
 import PrivateRoute from "./AuthProvider/PrivateRoute";
 import Login from "./components/Authentication/Login";
 import Register from "./components/Authentication/Register";
-// import BlogDetails from './components/Home/BlogDetails/BlogDetails.jsx';
-// import AllBlogs from "./components/Blogs/AllBlogs.jsx";
-// import AddBlogs from "./components/Blogs/AddBlogs.jsx";
-// import UpdateBlogs from "./components/Blogs/UpdateBlogs.jsx";
 import Chatbot from "./components/Chatbot/Chatbot.jsx";
 import Board from "./components/Board/Board.jsx";
 import BoardList from "./components/Board/BoardList.jsx";
-// import FeaturedBlogs from "./components/Blogs/FeaturedBlogs.jsx";
+
 
 const queryClient = new QueryClient();
 
@@ -36,10 +32,6 @@ const router = createBrowserRouter([
         path: "/",
         element: <Home></Home>,
       },
-      // {
-      //   path: "/featuredblogs",
-      //   element: <FeaturedBlogs></FeaturedBlogs>
-      // },
       {
         path: "/login",
         element: <Login></Login>,
@@ -48,35 +40,7 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register></Register>,
       },    
-      // {
-      //   path: "/blogs/:id",
-      //   element:
-      //     <PrivateRoute>
-      //       <BlogDetails></BlogDetails>
-      //     </PrivateRoute>,
-        
-      // },
-      // {
-      //   path: "/allblogs",
-      //   element:
-      //     <AllBlogs></AllBlogs>,
-      // },
-
-      // {
-      //   path: "/addblog",
-      //   element:
-      //     <PrivateRoute>
-      //       <AddBlogs></AddBlogs>
-      //     </PrivateRoute>,
-      // },
-      // {
-      //   path: "/update/:id",
-      //   element:
-      //     <PrivateRoute>
-      //       <UpdateBlogs></UpdateBlogs>
-      //     </PrivateRoute>,
-        
-      // },
+   
       {
         path: "/board",
         element:

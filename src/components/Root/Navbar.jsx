@@ -63,20 +63,7 @@ const Navbar = () => {
                 color: isActive ? 'white' : 'black'
             };
         }} to='/'>Home</NavLink></li>
-        {/* <li className='p-1'><NavLink style={({ isActive }) => {
-            return {
-                backgroundColor: isActive ? '#a50036' : 'white',
-                fontWeight: isActive ? "bold" : "",
-                color: isActive ? 'white' : 'black'
-            };
-        }} to='/allblogs'>All Blogs</NavLink></li> */}
-        {/* <li className='p-1'><NavLink style={({ isActive }) => {
-            return {
-                backgroundColor: isActive ? '#a50036' : 'white',
-                fontWeight: isActive ? "bold" : "",
-                color: isActive ? 'white' : 'black'
-            };
-        }} to='/addblog'>Add Blogs</NavLink></li> */}
+
         <li className='p-1'><NavLink style={({ isActive }) => {
             return {
                 backgroundColor: isActive ? '#006045' : 'white',
@@ -91,13 +78,7 @@ const Navbar = () => {
                 color: isActive ? 'white' : 'black'
             };
         }} to='/chatbot'>ChatBot</NavLink></li>
-        {/* <li className='p-1'><NavLink style={({ isActive }) => {
-            return {
-                backgroundColor: isActive ? '#a50036' : 'white',
-                fontWeight: isActive ? "bold" : "",
-                color: isActive ? 'white' : 'black'
-            };
-        }} to='/featuredblogs'>Featured Blogs</NavLink></li> */}
+ 
         <li>
             <label className="swap swap-rotate">
 
