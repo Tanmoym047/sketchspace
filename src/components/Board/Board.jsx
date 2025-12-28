@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef, useContext } from 'react'; // Added useContext
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import Swal from 'sweetalert2';
 import io from 'socket.io-client';
-import { AuthContext } from '../../AuthProvider/AuthProvider'; // 1. Adjust path to your AuthProvider
+import { AuthContext } from '../../AuthProvider/AuthProvider';
 import "@excalidraw/excalidraw/index.css";
 
 const socket = io('http://localhost:5000');
 
 const Board = () => {
     const { roomId } = useParams();
-    const { user } = useContext(AuthContext); // 2. Get current logged-in user
+    const { user } = useContext(AuthContext);
     const [excalidrawAPI, setExcalidrawAPI] = useState(null);
     const [initialData, setInitialData] = useState(null);
     const [boardName, setBoardName] = useState("Untitled Board");
@@ -50,14 +50,13 @@ const Board = () => {
             }
         });
 
-        // 3. Listen for mouse + user info (including photo)
         socket.on('receive-mouse', (data) => {
             setCollaborators((prev) => {
                 const newMap = new Map(prev);
                 newMap.set(data.socketId, {
                     pointer: data.pointer,
                     button: data.button,
-                    photoURL: data.user?.photoURL, // Get their Google image
+                    photoURL: data.user?.photoURL,
                 });
                 return newMap;
             });
@@ -70,6 +69,7 @@ const Board = () => {
         };
     }, [roomId, excalidrawAPI]);
 
+    // MODIFIED: Added userEmail to identify owner/collaborator
     const handleSave = async (elements = null, isManual = false) => {
         const currentElements = elements || excalidrawAPI?.getSceneElements();
         if (!currentElements) return;
@@ -78,6 +78,7 @@ const Board = () => {
             roomId,
             name: boardName,
             elements: currentElements,
+            userEmail: user?.email, // Sends your email to the backend
             lastModified: new Date()
         };
 
@@ -97,6 +98,40 @@ const Board = () => {
         } catch (error) { console.error("Save failed:", error); }
     };
 
+    // NEW: Handle Invite Logic
+    const handleInvite = async () => {
+        const { value: inviteeEmail } = await Swal.fire({
+            title: 'Invite Collaborator',
+            input: 'email',
+            inputLabel: 'Their Google/Registered Email',
+            inputPlaceholder: 'friend@example.com',
+            showCancelButton: true,
+            confirmButtonText: 'Add to Board',
+            confirmButtonColor: '#e11d48', // Matching rose theme
+        });
+
+        if (inviteeEmail) {
+            try {
+                const response = await fetch('http://localhost:5000/board/invite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ roomId, inviteeEmail })
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Collaborator Added',
+                        text: `${inviteeEmail} can now see this board in their dashboard.`,
+                        timer: 2000
+                    });
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Could not send invitation.', 'error');
+            }
+        }
+    };
+
     const handleChange = (elements) => {
         if (elements.length === 0) return;
         if (!isImportingRef.current) {
@@ -106,7 +141,6 @@ const Board = () => {
         saveTimerRef.current = setTimeout(() => { handleSave(elements, false); }, 5 * 60 * 1000); 
     };
 
-    // 4. Broadcast your mouse + Google photo
     const handlePointerUpdate = (payload) => {
         if (payload.pointer) {
             socket.emit('mouse-move', {
@@ -114,7 +148,7 @@ const Board = () => {
                 pointer: payload.pointer,
                 button: payload.button,
                 user: {
-                    photoURL: user?.photoURL // Send your photo to others
+                    photoURL: user?.photoURL
                 }
             });
         }
@@ -139,7 +173,11 @@ const Board = () => {
                     />
                 </div>
                 <div className="flex-none flex items-center gap-2">
-                    {/* 5. Show your own profile picture in the header */}
+                    {/* NEW INVITE BUTTON - MATCHES YOUR DESIGN */}
+                    <button className="btn btn-sm btn-outline btn-secondary" onClick={handleInvite}>
+                        Invite
+                    </button>
+
                     {user?.photoURL && (
                         <div className="avatar">
                             <div className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 mr-2">
@@ -162,7 +200,6 @@ const Board = () => {
                     onPointerUpdate={handlePointerUpdate}
                     renderTopRightUI={() => (
                         <div className="flex -space-x-2 mr-2">
-                            {/* 6. Show other people's Google images inside the canvas */}
                             {[...collaborators.values()].map((collab, index) => (
                                 collab.photoURL && (
                                     <div key={index} className="avatar">
