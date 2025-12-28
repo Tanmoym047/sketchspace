@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { Excalidraw } from '@excalidraw/excalidraw';
+import { Excalidraw, convertToExcalidrawElements } from '@excalidraw/excalidraw';
 import Swal from 'sweetalert2';
 import io from 'socket.io-client';
 import { AuthContext } from '../../AuthProvider/AuthProvider';
@@ -15,7 +15,7 @@ const Board = () => {
     const [initialData, setInitialData] = useState(null);
     const [boardName, setBoardName] = useState("Untitled Board");
     const [isLoading, setIsLoading] = useState(true);
-    
+
     const [collaborators, setCollaborators] = useState(new Map());
     const saveTimerRef = useRef(null);
     const isImportingRef = useRef(false);
@@ -138,7 +138,7 @@ const Board = () => {
             socket.emit('drawing-update', { roomId, elements });
         }
         if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-        saveTimerRef.current = setTimeout(() => { handleSave(elements, false); }, 5 * 60 * 1000); 
+        saveTimerRef.current = setTimeout(() => { handleSave(elements, false); }, 5 * 60 * 1000);
     };
 
     const handlePointerUpdate = (payload) => {
@@ -154,9 +154,49 @@ const Board = () => {
         }
     };
 
+    const handleAiGenerate = async () => {
+        const { value: userPrompt } = await Swal.fire({
+            title: 'Describe your diagram',
+            input: 'text',
+            inputPlaceholder: 'e.g., A flow chart of an e-commerce order process',
+            showCancelButton: true,
+            confirmButtonText: 'Generate ✨',
+            confirmButtonColor: '#9f1239', // Rose-800
+        });
+
+        if (userPrompt) {
+            Swal.fire({ title: 'AI is drawing...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                const response = await fetch(`http://localhost:5000/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: userPrompt })
+                });
+                const data = await response.json();
+
+                if (data.elements && excalidrawAPI) {
+                    // IMPORTANT: Convert raw AI JSON into real Excalidraw elements
+                    const validatedElements = convertToExcalidrawElements(data.elements);
+
+                    const currentElements = excalidrawAPI.getSceneElements();
+
+                    excalidrawAPI.updateScene({
+                        elements: [...currentElements, ...validatedElements],
+                    });
+
+                    Swal.fire('Success!', 'AI shapes added to board.', 'success');
+                }
+            } catch (error) {
+                console.error("AI Error:", error);
+                Swal.fire('Error', 'AI failed to generate valid shapes.', 'error');
+            }
+        }
+    };
+
     if (isLoading) return (
         <div className="h-screen flex items-center justify-center bg-base-100">
-            <span className="loading loading-spinner loading-lg text-primary"></span>
+            <span className="loading loading-spinner loading-lg text-emerald-700"></span>
         </div>
     );
 
@@ -164,18 +204,25 @@ const Board = () => {
         <div className="flex flex-col h-screen bg-base-200 overflow-hidden text-base-content">
             <header className="navbar bg-base-100 shadow-sm z-10 px-4">
                 <div className="flex-1">
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         value={boardName}
                         onChange={(e) => setBoardName(e.target.value)}
                         onBlur={() => handleSave(null, false)}
-                        className="input input-ghost input-sm text-xl font-bold text-primary w-full max-w-xs focus:bg-transparent"
+                        className="input input-ghost input-sm text-xl font-bold text-emerald-700 w-full max-w-xs focus:bg-transparent"
                     />
                 </div>
                 <div className="flex-none flex items-center gap-2">
                     {/* NEW INVITE BUTTON - MATCHES YOUR DESIGN */}
                     <button className="btn btn-sm btn-outline btn-secondary" onClick={handleInvite}>
                         Invite
+                    </button>
+
+                    <button
+                        onClick={handleAiGenerate}
+                        className="btn btn-sm btn-outline btn-secondary border-dashed"
+                    >
+                        AI Magic ✨
                     </button>
 
                     {user?.photoURL && (
@@ -186,7 +233,7 @@ const Board = () => {
                         </div>
                     )}
                     <div className="badge badge-success badge-outline hidden sm:flex">Live Sync</div>
-                    <button className="btn btn-sm btn-primary px-6" onClick={() => handleSave(null, true)}>
+                    <button className="btn btn-sm btn-primary bg-emerald-800 px-6" onClick={() => handleSave(null, true)}>
                         Save Now
                     </button>
                 </div>

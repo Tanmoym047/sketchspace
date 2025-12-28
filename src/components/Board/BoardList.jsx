@@ -54,7 +54,7 @@ const BoardList = () => {
 
     if (loading) return (
         <div className="h-64 flex items-center justify-center">
-            <span className="loading loading-spinner loading-lg text-primary"></span>
+            <span className="loading loading-spinner loading-lg text-emerald-700"></span>
         </div>
     );
 
@@ -67,7 +67,7 @@ const BoardList = () => {
                 </div>
                 <button 
                     onClick={() => navigate(`/board/${crypto.randomUUID()}`)} 
-                    className="btn btn-primary"
+                    className="btn btn-primary bg-emerald-800"
                 >
                     + New Board
                 </button>
@@ -98,7 +98,7 @@ const BoardList = () => {
                                 </button>
                                 <button 
                                     onClick={() => navigate(`/board/${board.roomId}`)} 
-                                    className="btn btn-xs btn-primary px-4"
+                                    className="btn btn-xs btn-primary bg-emerald-800 px-4"
                                 >
                                     Open
                                 </button>
