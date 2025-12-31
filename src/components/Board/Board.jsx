@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 import { AuthContext } from '../../AuthProvider/AuthProvider';
 import "@excalidraw/excalidraw/index.css";
 
-const socket = io('http://localhost:5000');
+const socket = io('https://sketchspace-server.onrender.com/');
 
 const Board = () => {
     const { roomId } = useParams();
