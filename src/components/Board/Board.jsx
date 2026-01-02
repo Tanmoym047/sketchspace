@@ -24,16 +24,31 @@ const Board = () => {
         const fetchBoard = async () => {
             try {
                 const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/board/${roomId}`);
-                const data = await response.json();
+
+                // If the board doesn't exist (new room), just stop loading and show empty board
+                if (!response.ok || response.status === 204) {
+                    setInitialData({ elements: [], appState: { theme: 'light' } });
+                    return;
+                }
+
+                const text = await response.text();
+                if (!text) {
+                    setInitialData({ elements: [], appState: { theme: 'light' } });
+                    return;
+                }
+
+                const data = JSON.parse(text);
                 if (data) {
                     setBoardName(data.name || "Untitled Board");
                     setInitialData({
-                        elements: data.elements,
+                        elements: data.elements || [],
                         appState: { theme: 'light' },
                     });
                 }
             } catch (error) {
                 console.error("Load error:", error);
+                // Fallback for new rooms or errors
+                setInitialData({ elements: [], appState: { theme: 'light' } });
             } finally {
                 setIsLoading(false);
             }
@@ -68,6 +83,54 @@ const Board = () => {
             socket.off('receive-mouse');
         };
     }, [roomId, excalidrawAPI]);
+
+    // New Effect for Extension Text Import
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const isTextImport = urlParams.get('import') === 'text';
+
+        if (isTextImport && excalidrawAPI && !isLoading) {
+            // Wait a second for the board to settle
+            const timer = setTimeout(() => {
+                window.postMessage({ type: "REQUEST_TEXT_FROM_EXTENSION" }, "*");
+            }, 1000);
+
+            const handleMessage = (event) => {
+                if (event.data && event.data.type === "TEXT_RECEIVED") {
+                    const clippedText = event.data.text;
+                    if (!clippedText) return;
+
+                    const textElement = {
+                        type: "text",
+                        x: window.innerWidth / 2 - 100,
+                        y: window.innerHeight / 2 - 50,
+                        text: clippedText,
+                        fontSize: 20,
+                        fontFamily: 1,
+                        textAlign: "left",
+                        verticalAlign: "top",
+                        strokeColor: "#000000",
+                        backgroundColor: "transparent",
+                        width: 400,
+                    };
+
+                    excalidrawAPI.updateScene({
+                        elements: [...excalidrawAPI.getSceneElements(), textElement],
+                        appState: { scrollToContent: true }
+                    });
+
+                    // Clean the URL so refreshing doesn't re-import
+                    window.history.replaceState({}, '', window.location.pathname);
+                }
+            };
+
+            window.addEventListener("message", handleMessage);
+            return () => {
+                window.removeEventListener("message", handleMessage);
+                clearTimeout(timer);
+            };
+        }
+    }, [excalidrawAPI, isLoading, roomId]);
 
     // MODIFIED: Added userEmail to identify owner/collaborator
     const handleSave = async (elements = null, isManual = false) => {
