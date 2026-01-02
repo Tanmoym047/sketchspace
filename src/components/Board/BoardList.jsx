@@ -14,7 +14,7 @@ const BoardList = () => {
 
         try {
             // 3. Fetch boards specific to this user's email
-            const response = await fetch(`https://sketchspace-server.onrender.com/allBoards/${user.email}`);
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/allBoards/${user.email}`);
             const data = await response.json();
             setSavedBoards(data);
         } catch (error) {
@@ -43,7 +43,7 @@ const BoardList = () => {
 
         if (result.isConfirmed) {
             try {
-                await fetch(`https://sketchspace-server.onrender.com/board/delete/${id}`, { method: 'DELETE' });
+                await fetch(`${import.meta.env.VITE_BACKEND_URL}/board/delete/${id}`, { method: 'DELETE' });
                 fetchBoardsFromDB(); // Refresh list
                 Swal.fire('Deleted', '', 'success');
             } catch (error) {

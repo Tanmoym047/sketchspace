@@ -44,11 +44,11 @@ const Login = () => {
         }).then(() => {
             // 2. Sync user to MongoDB first
             // We use PUT and your localhost URL for the new SketchSpace backend
-            axios.put('https://sketchspace-server.onrender.com/user/sync', userData)
+            axios.put(`${import.meta.env.VITE_BACKEND_URL}/user/sync`, userData)
                 .then(() => {
                     // 3. NOW run your original JWT logic
                     // Using 'data' variable exactly as your working code did
-                    axios.post('https://sketchspace-server.onrender.com/jwt', data, {
+                    axios.post(`${import.meta.env.VITE_BACKEND_URL}/jwt`, data, {
                         withCredentials: true
                     }).then(res => {
                         if (res.data.success) {
@@ -61,7 +61,7 @@ const Login = () => {
                 .catch(err => {
                     console.error("DB Sync Error:", err);
                     // Fallback: If DB sync fails, still try to navigate so the user isn't stuck
-                    axios.post('https://sketchspace-server.onrender.com/jwt', data, { withCredentials: true })
+                    axios.post(`${import.meta.env.VITE_BACKEND_URL}/jwt`, data, { withCredentials: true })
                         .then(res => res.data.success && navigate(location?.state ? location?.state : '/'));
                 });
         });

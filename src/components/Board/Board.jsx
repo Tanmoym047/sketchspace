@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 import { AuthContext } from '../../AuthProvider/AuthProvider';
 import "@excalidraw/excalidraw/index.css";
 
-const socket = io('https://sketchspace-server.onrender.com/');
+const socket = io(`${import.meta.env.VITE_BACKEND_URL}/`);
 
 const Board = () => {
     const { roomId } = useParams();
@@ -23,7 +23,7 @@ const Board = () => {
     useEffect(() => {
         const fetchBoard = async () => {
             try {
-                const response = await fetch(`https://sketchspace-server.onrender.com/board/${roomId}`);
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/board/${roomId}`);
                 const data = await response.json();
                 if (data) {
                     setBoardName(data.name || "Untitled Board");
@@ -83,7 +83,7 @@ const Board = () => {
         };
 
         try {
-            await fetch(`https://sketchspace-server.onrender.com/board/save/${roomId}`, {
+            await fetch(`${import.meta.env.VITE_BACKEND_URL}/board/save/${roomId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(boardData)
@@ -112,7 +112,7 @@ const Board = () => {
 
         if (inviteeEmail) {
             try {
-                const response = await fetch('https://sketchspace-server.onrender.com/board/invite', {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/board/invite`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ roomId, inviteeEmail })
@@ -168,7 +168,7 @@ const Board = () => {
             Swal.fire({ title: 'AI is drawing...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
             try {
-                const response = await fetch(`https://sketchspace-server.onrender.com/generate`, {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/generate`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: userPrompt })

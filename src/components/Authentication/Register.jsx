@@ -71,10 +71,10 @@ const Register = () => {
                 email: email,
                 photoURL: photo
             };
-            await axios.put('https://sketchspace-server.onrender.com/user/sync', userData);
+            await axios.put(`${import.meta.env.VITE_BACKEND_URL}/user/sync`, userData);
 
             // 4. Get JWT Token for auto-login
-            const jwtRes = await axios.post('https://sketchspace-server.onrender.com/jwt', { email }, {
+            const jwtRes = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/jwt`, { email }, {
                 withCredentials: true
             });
 
