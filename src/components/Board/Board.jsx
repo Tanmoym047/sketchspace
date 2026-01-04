@@ -27,13 +27,13 @@ const Board = () => {
 
                 // If the board doesn't exist (new room), just stop loading and show empty board
                 if (!response.ok || response.status === 204) {
-                    setInitialData({ elements: [], appState: { theme: 'light' } });
+                    setInitialData({ elements: [], appState: { theme: 'light', scrollToContent: true } });
                     return;
                 }
 
                 const text = await response.text();
                 if (!text) {
-                    setInitialData({ elements: [], appState: { theme: 'light' } });
+                    setInitialData({ elements: [], appState: { theme: 'light', scrollToContent: true } });
                     return;
                 }
 
@@ -42,13 +42,13 @@ const Board = () => {
                     setBoardName(data.name || "Untitled Board");
                     setInitialData({
                         elements: data.elements || [],
-                        appState: { theme: 'light' },
+                        appState: { theme: 'light', scrollToContent: true },
                     });
                 }
             } catch (error) {
                 console.error("Load error:", error);
                 // Fallback for new rooms or errors
-                setInitialData({ elements: [], appState: { theme: 'light' } });
+                setInitialData({ elements: [], appState: { theme: 'light',scrollToContent: true } });
             } finally {
                 setIsLoading(false);
             }
