@@ -170,7 +170,7 @@ const Board = () => {
             inputPlaceholder: 'friend@example.com',
             showCancelButton: true,
             confirmButtonText: 'Add to Board',
-            confirmButtonColor: '#e11d48', // Matching rose theme
+            confirmButtonColor: '#006045', 
         });
 
         if (inviteeEmail) {
