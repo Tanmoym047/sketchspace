@@ -357,7 +357,7 @@ const Board = () => {
                 </div>
             </header>
 
-            <main className="flex-grow relative">
+            <main className="flex-grow relative px-4">
                 <div className="absolute bottom-20 left-4 z-50 pointer-events-none bg-black backdrop-blur-sm px-4 py-2 rounded-xl border border-emerald-100 text-[11px] font-mono shadow-lg flex gap-4 transition-all">
                     <div className="flex flex-col">
                         <span className="text-white uppercase text-[9px]">X axis</span>
