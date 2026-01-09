@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { Excalidraw, convertToExcalidrawElements } from '@excalidraw/excalidraw';
+import { Excalidraw, convertToExcalidrawElements, Sidebar } from '@excalidraw/excalidraw';
 import Swal from 'sweetalert2';
 import io from 'socket.io-client';
 import { AuthContext } from '../../AuthProvider/AuthProvider';
@@ -15,6 +15,7 @@ const Board = () => {
     const [initialData, setInitialData] = useState(null);
     const [boardName, setBoardName] = useState("Untitled Board");
     const [isLoading, setIsLoading] = useState(true);
+    const [cameraPos, setCameraPos] = useState({ x: 0, y: 0 });
 
     const [collaborators, setCollaborators] = useState(new Map());
     const saveTimerRef = useRef(null);
@@ -27,13 +28,13 @@ const Board = () => {
 
                 // If the board doesn't exist (new room), just stop loading and show empty board
                 if (!response.ok || response.status === 204) {
-                    setInitialData({ elements: [], appState: { theme: 'light', scrollToContent: true } });
+                    setInitialData({ elements: [], appState: { theme: 'light', scrollToContent: true, viewBackgroundColor: "#f8fafc", openSidebar: { name: "custom", tab: "minimap" } } });
                     return;
                 }
 
                 const text = await response.text();
                 if (!text) {
-                    setInitialData({ elements: [], appState: { theme: 'light', scrollToContent: true } });
+                    setInitialData({ elements: [], appState: { theme: 'light', scrollToContent: true, viewBackgroundColor: "#f8fafc", openSidebar: { name: "custom", tab: "minimap" } } });
                     return;
                 }
 
@@ -42,13 +43,13 @@ const Board = () => {
                     setBoardName(data.name || "Untitled Board");
                     setInitialData({
                         elements: data.elements || [],
-                        appState: { theme: 'light', scrollToContent: true },
+                        appState: { theme: 'light', scrollToContent: true, viewBackgroundColor: "#f8fafc", openSidebar: { name: "custom", tab: "minimap" } },
                     });
                 }
             } catch (error) {
                 console.error("Load error:", error);
                 // Fallback for new rooms or errors
-                setInitialData({ elements: [], appState: { theme: 'light',scrollToContent: true } });
+                setInitialData({ elements: [], appState: { theme: 'light', scrollToContent: true } });
             } finally {
                 setIsLoading(false);
             }
@@ -170,7 +171,7 @@ const Board = () => {
             inputPlaceholder: 'friend@example.com',
             showCancelButton: true,
             confirmButtonText: 'Add to Board',
-            confirmButtonColor: '#006045', 
+            confirmButtonColor: '#006045',
         });
 
         if (inviteeEmail) {
@@ -195,7 +196,20 @@ const Board = () => {
         }
     };
 
-    const handleChange = (elements) => {
+    const handleChange = (elements, appState) => {
+        if (appState) {
+            const newX = Math.round(appState.scrollX || 0);
+            const newY = Math.round(appState.scrollY || 0);
+
+            // ONLY update state if the coordinates actually moved
+            // This breaks the infinite loop
+            setCameraPos(prev => {
+                if (prev.x !== newX || prev.y !== newY) {
+                    return { x: newX, y: newY };
+                }
+                return prev;
+            });
+        }
         if (elements.length === 0) return;
         if (!isImportingRef.current) {
             socket.emit('drawing-update', { roomId, elements });
@@ -215,6 +229,16 @@ const Board = () => {
                 }
             });
         }
+    };
+    const moveCamera = (deltaX, deltaY) => {
+        if (!excalidrawAPI) return;
+        const { scrollX, scrollY } = excalidrawAPI.getAppState();
+        excalidrawAPI.updateScene({
+            appState: {
+                scrollX: scrollX + deltaX,
+                scrollY: scrollY + deltaY
+            }
+        });
     };
 
     const handleAiGenerate = async () => {
@@ -290,6 +314,27 @@ const Board = () => {
                         >
                             AI Magic ✨
                         </button>
+                        <button
+                            className="btn btn-xs sm:btn-sm btn-primary bg-emerald-800 border-none px-3 sm:px-6"
+                            onClick={() => {
+                                if (!excalidrawAPI) return;
+
+                                const currentAppState = excalidrawAPI.getAppState();
+
+                                // Check if our specific 'custom' sidebar is currently open
+                                const isSidebarOpen = currentAppState.openSidebar?.name === "custom";
+
+                                excalidrawAPI.updateScene({
+                                    appState: {
+                                        // If open, set to null (close). If closed, set to our name.
+                                        openSidebar: isSidebarOpen ? null : { name: "custom" }
+                                    }
+                                });
+                            }}
+                            title="Toggle Navigation Hub"
+                        >
+                            Sidebar
+                        </button>
                     </div>
 
                     {/* Row 2: Status & Save */}
@@ -313,11 +358,28 @@ const Board = () => {
             </header>
 
             <main className="flex-grow relative">
+                <div className="absolute bottom-20 left-4 z-50 pointer-events-none bg-black backdrop-blur-sm px-4 py-2 rounded-xl border border-emerald-100 text-[11px] font-mono shadow-lg flex gap-4 transition-all">
+                    <div className="flex flex-col">
+                        <span className="text-white uppercase text-[9px]">X axis</span>
+                        <span className="text-emerald-700 font-bold">{cameraPos.x}</span>
+                    </div>
+                    <div className="flex flex-col border-l border-emerald-100 pl-4">
+                        <span className="text-white uppercase text-[9px]">Y axis</span>
+                        <span className="text-emerald-700 font-bold">{cameraPos.y}</span>
+                    </div>
+                </div>
                 <Excalidraw
                     excalidrawAPI={(api) => setExcalidrawAPI(api)}
                     initialData={initialData}
                     onChange={handleChange}
                     onPointerUpdate={handlePointerUpdate}
+                    UIOptions={{
+                        canvasActions: {
+                            toggleZenMode: true,
+                            // This ensures the view mode doesn't block tools
+                            viewBackgroundColor: true,
+                        }
+                    }}
                     renderTopRightUI={() => (
                         <div className="flex -space-x-2 mr-2">
                             {[...collaborators.values()].map((collab, index) => (
@@ -331,7 +393,56 @@ const Board = () => {
                             ))}
                         </div>
                     )}
-                />
+                >
+                    <Sidebar name="custom">
+                        <Sidebar.Header>Navigation Hub</Sidebar.Header>
+                        <div className=" p-4 space-y-6">
+
+                            {/* 1. Coordinate Overview */}
+                            <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                                <h3 className="text-[10px] uppercase tracking-widest text-emerald-800 font-bold mb-2">Current Location</h3>
+                                <div className="flex justify-between font-mono text-sm">
+                                    <span>X: {cameraPos.x}</span>
+                                    <span>Y: {cameraPos.y}</span>
+                                </div>
+                            </div>
+
+                            {/* 2. Quick Jump Buttons (The "Scrollbar Replacement") */}
+                            <div className="space-y-2">
+                                <h3 className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Quick Jump</h3>
+                                <button
+                                    className="btn btn-sm btn-block btn-outline border-emerald-200 text-emerald-700"
+                                    onClick={() => excalidrawAPI.scrollToContent(excalidrawAPI.getSceneElements())}
+                                >
+                                    Fit All Content
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-block btn-outline border-emerald-200 text-emerald-700"
+                                    onClick={() => excalidrawAPI.updateScene({ appState: { scrollX: 0, scrollY: 0, zoom: { value: 1 } } })}
+                                >
+                                    Center (0, 0)
+                                </button>
+                            </div>
+
+                            {/* 3. Manual Scroller (Directional) */}
+                            <div className="space-y-2">
+                                <h3 className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Pan Camera</h3>
+                                <div className="grid grid-cols-3 gap-1 max-w-[120px] mx-auto">
+                                    <div />
+                                    <button className="btn btn-xs btn-square" onClick={() => moveCamera(0, 100)}>↑</button>
+                                    <div />
+                                    <button className="btn btn-xs btn-square" onClick={() => moveCamera(100, 0)}>←</button>
+                                    <button className="btn btn-xs btn-square" onClick={() => excalidrawAPI.scrollToContent()}>•</button>
+                                    <button className="btn btn-xs btn-square" onClick={() => moveCamera(-100, 0)}>→</button>
+                                    <div />
+                                    <button className="btn btn-xs btn-square" onClick={() => moveCamera(0, -100)}>↓</button>
+                                    <div />
+                                </div>
+                            </div>
+                        </div>
+                    </Sidebar>
+                </Excalidraw>
+
             </main>
         </div>
     );

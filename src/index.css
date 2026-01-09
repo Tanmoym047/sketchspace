@@ -7,3 +7,14 @@
 .font-ubuntu {
     font-family: "Ubuntu Sans", sans-serif;
 }
+
+/* This shrinks the physical sidebar container */
+.excalidraw .sidebar {
+  width: 220px !important;
+  max-width: 220px !important;
+}
+
+/* This ensures the sidebar doesn't overlap the drawing tools on small screens */
+.excalidraw .sidebar-content {
+  padding: 12px !important;
+}
