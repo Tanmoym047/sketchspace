@@ -33,6 +33,33 @@ const AuthProvider = ({ children }) => {
         }
     }, [auth])
 
+    // Add this inside the AuthProvider component, after your existing useEffect
+    useEffect(() => {
+        const sendAuthToExtension = () => {
+            if (user) {
+                // "Shout" the user data to the browser window
+                window.postMessage({
+                    type: "SKETCHSPACE_AUTH_DATA",
+                    uid: user.uid,
+                    email: user.email
+                }, "*");
+            }
+        };
+
+        // Broadcast when user state changes
+        sendAuthToExtension();
+
+        // Listen for the extension specifically asking "Who is logged in?"
+        const handleRefreshRequest = (event) => {
+            if (event.data.type === "REQUEST_AUTH_REFRESH") {
+                sendAuthToExtension();
+            }
+        };
+
+        window.addEventListener("message", handleRefreshRequest);
+        return () => window.removeEventListener("message", handleRefreshRequest);
+    }, [user]);
+
     const signUp = (email, password) => {
         setLoading(true);
         return createUserWithEmailAndPassword(auth, email, password);
@@ -54,7 +81,7 @@ const AuthProvider = ({ children }) => {
         return signInWithPopup(auth, githubProvider);
     }
     const updateUser = (name, photo) => {
-        
+
         return updateProfile(auth.currentUser, {
             displayName: name, photoURL: photo
         });
