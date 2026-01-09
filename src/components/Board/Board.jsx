@@ -99,12 +99,17 @@ const Board = () => {
             const handleMessage = (event) => {
                 if (event.data && event.data.type === "TEXT_RECEIVED") {
                     const clippedText = event.data.text;
-                    if (!clippedText) return;
+                    if (!clippedText || !excalidrawAPI) return;
 
+                    // 1. Get the current elements from the API (Just like your AI button does)
+                    const currentElements = excalidrawAPI.getSceneElements();
+
+                    // 2. Create the element with a UNIQUE ID and VERSION
                     const textElement = {
                         type: "text",
-                        x: window.innerWidth / 2 - 100,
-                        y: window.innerHeight / 2 - 50,
+                        // Center it based on current camera position
+                        x: excalidrawAPI.getAppState().scrollX + (window.innerWidth / 2) - 100,
+                        y: excalidrawAPI.getAppState().scrollY + (window.innerHeight / 2) - 50,
                         text: clippedText,
                         fontSize: 20,
                         fontFamily: 1,
@@ -113,15 +118,29 @@ const Board = () => {
                         strokeColor: "#000000",
                         backgroundColor: "transparent",
                         width: 400,
+                        // REQUIRED: Generate a new version so Excalidraw renders it ON TOP
+                        version: Date.now(),
+                        versionNonce: Math.floor(Math.random() * 1000000000),
+                        updated: Date.now(),
                     };
 
+                    // 3. Update the scene (Exactly like your handleAiGenerate does)
                     excalidrawAPI.updateScene({
-                        elements: [...excalidrawAPI.getSceneElements(), textElement],
-                        appState: { scrollToContent: true }
+                        elements: [...currentElements, textElement],
+                        appState: {
+                            scrollToContent: true
+                        }
                     });
 
-                    // Clean the URL so refreshing doesn't re-import
+                    // 4. Force a sync to your database immediately
+                    handleSave([...currentElements, textElement], false);
+
+                    // Clean the URL
                     window.history.replaceState({}, '', window.location.pathname);
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 700); // 5000ms = 5 seconds
                 }
             };
 
